@@ -2,7 +2,6 @@
 
 import sys
 import pygame
-from pygame.locals import *
 
 ANCHO = 600
 ALTO = 680
@@ -46,16 +45,33 @@ def main():
     
     reloj = pygame.time.Clock()
 
+    posX, posY = 225, 550
+
     while True:
         ventana.blit(fondo, (0, 0))
-        ventana.blit(nave, (225, 550))
+        ventana.blit(nave, (posX, posY))
         ventana.blit(asteroide1, (0, 0))
         ventana.blit(asteroide2, (225, 0))
         ventana.blit(asteroide3, (470, 0))
         for evento in pygame.event.get():
-            if evento.type == QUIT:
+            if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if evento.type == pygame.KEYDOWN:
+                if evento.key == pygame.K_LEFT:
+                    if posX == 470:
+                        posX = 225
+                    elif posX == 225:
+                        posX = 0
+                elif evento.key == pygame.K_RIGHT:
+                    if posX == 0:
+                        posX = 225
+                    elif posX == 225:
+                        posX = 470
+                elif evento.key ==  pygame.K_UP:
+                    posY -= 30
+                elif evento.key ==  pygame.K_DOWN:
+                    posY += 30
 
         reloj.tick(20) # 20 FPS
         pygame.display.update()
