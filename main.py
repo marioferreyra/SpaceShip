@@ -44,6 +44,8 @@ def main():
     asteroide2 = pygame.image.load("images/asteroide2.png")
     asteroide3 = pygame.image.load("images/asteroide3.png")
     
+    reloj = pygame.time.Clock()
+
     while True:
         ventana.blit(fondo, (0, 0))
         ventana.blit(nave, (225, 550))
@@ -54,6 +56,8 @@ def main():
             if evento.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+        reloj.tick(20) # 20 FPS
         pygame.display.update()
 
 
