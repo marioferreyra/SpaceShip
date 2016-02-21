@@ -28,6 +28,27 @@ class Nave(pygame.sprite.Sprite):
     def moverIzquierda(self):
         self.rect.left -= 100
 
+    def moverArriba(self):
+        self.rect.top -= 100
+
+    def moverAbajo(self):
+        self.rect.top += 100
+
+
+class Asteroide(pygame.sprite.Sprite):
+
+    def __init__(self, path_image, posX=0, posY=0):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.imagen = pygame.image.load(path_image)
+        self.rect = self.imagen.get_rect()
+
+        self.rect.left = posX
+        self.rect.top = posY
+
+    def dibujar(self, superficie):
+        superficie.blit(self.imagen, self.rect)
+
 
 
 
@@ -41,20 +62,18 @@ def main():
 
     fondo = pygame.image.load("images/fondo.jpg")
     nave = Nave()
-    asteroide1 = pygame.image.load("images/asteroide1.png")
-    asteroide2 = pygame.image.load("images/asteroide2.png")
-    asteroide3 = pygame.image.load("images/asteroide3.png")
-    
-    reloj = pygame.time.Clock()
+    asteroide1 = Asteroide("images/asteroide1.png", 22, 10)
+    asteroide2 = Asteroide("images/asteroide2.png", 236, 10)
+    asteroide3 = Asteroide("images/asteroide3.png", 450, 10)
 
-    posX, posY = 225, 550
+    reloj = pygame.time.Clock()
 
     while True:
         ventana.blit(fondo, (0, 0))
-        ventana.blit(asteroide1, (0, 0))
-        ventana.blit(asteroide2, (225, 0))
-        ventana.blit(asteroide3, (470, 0))
         nave.dibujar(ventana)
+        asteroide1.dibujar(ventana)
+        asteroide2.dibujar(ventana)
+        asteroide3.dibujar(ventana)
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
@@ -64,6 +83,17 @@ def main():
                     nave.moverIzquierda()
                 elif evento.key == pygame.K_RIGHT:
                     nave.moverDerecha()
+                elif evento.key == pygame.K_UP:
+                    nave.moverArriba()
+                elif evento.key == pygame.K_DOWN:
+                    nave.moverAbajo()
+
+        if nave.rect.colliderect(asteroide1.rect):
+            print "### CHOQUE ASTEROIDE 1 ###"
+        if nave.rect.colliderect(asteroide2.rect):
+            print "### CHOQUE ASTEROIDE 2 ###"
+        if nave.rect.colliderect(asteroide3.rect):
+            print "### CHOQUE ASTEROIDE 3 ###"
 
         reloj.tick(20) # 20 FPS
         pygame.display.update()
