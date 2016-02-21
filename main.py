@@ -69,13 +69,16 @@ def cargarAsteriodes():
     ASTERIODES.append(asteroide2)
     ASTERIODES.append(asteroide3)
 
+
 def main():
     pygame.init()
 
     # Creacion Ventana
     ventana = pygame.display.set_mode((ANCHO, ALTO))
+
     # Titulo de ventana
     pygame.display.set_caption("SpaceShip")
+
     fondo = pygame.image.load("images/fondo.jpg")
     fps = pygame.time.Clock()
 
@@ -92,6 +95,7 @@ def main():
                 sys.exit()
 
             if en_juego:
+                # Movimientos
                 if evento.type == pygame.KEYDOWN:
                     if evento.key == pygame.K_LEFT:
                         nave.moverIzquierda()
@@ -114,6 +118,7 @@ def main():
 
         if len(ASTERIODES) > 0:
             for asteroide in ASTERIODES:
+                asteroide.mover()
                 # Si choca con un asteroide
                 if asteroide.rect.colliderect(nave.rect):
                     nave.destruccion()
