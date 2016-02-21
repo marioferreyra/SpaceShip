@@ -2,6 +2,8 @@
 
 import sys
 import pygame
+import random
+from time import sleep
 
 ANCHO = 600
 ALTO = 680
@@ -13,6 +15,7 @@ class Nave(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         self.imagen = pygame.image.load("images/nave.png")
+        self.imagen_explosion = pygame.image.load("images/explosion.png")
         self.rect = self.imagen.get_rect()
         
         self.rect.centerx = ANCHO/2
@@ -21,6 +24,9 @@ class Nave(pygame.sprite.Sprite):
     
     def dibujar(self, superficie):
         superficie.blit(self.imagen, self.rect)
+
+    def destruccion(self):
+        self.imagen = self.imagen_explosion
 
     def moverDerecha(self):
         self.rect.left += 100
@@ -49,6 +55,9 @@ class Asteroide(pygame.sprite.Sprite):
     def dibujar(self, superficie):
         superficie.blit(self.imagen, self.rect)
 
+    def movimieto(self):
+        self.rect.top += 10
+
 
 
 
@@ -74,6 +83,15 @@ def main():
         asteroide1.dibujar(ventana)
         asteroide2.dibujar(ventana)
         asteroide3.dibujar(ventana)
+        
+        aleatorio = random.randint(1, 3)
+        if aleatorio == 1:
+            asteroide1.movimieto()
+        elif aleatorio == 2:
+            asteroide2.movimieto()
+        elif aleatorio == 3:
+            asteroide3.movimieto()
+
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
@@ -89,11 +107,11 @@ def main():
                     nave.moverAbajo()
 
         if nave.rect.colliderect(asteroide1.rect):
-            print "### CHOQUE ASTEROIDE 1 ###"
+            nave.destruccion()
         if nave.rect.colliderect(asteroide2.rect):
-            print "### CHOQUE ASTEROIDE 2 ###"
+            nave.destruccion()
         if nave.rect.colliderect(asteroide3.rect):
-            print "### CHOQUE ASTEROIDE 3 ###"
+            nave.destruccion()
 
         reloj.tick(20) # 20 FPS
         pygame.display.update()
