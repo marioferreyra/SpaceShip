@@ -7,7 +7,7 @@ from time import sleep
 
 ANCHO = 600
 ALTO = 680
-
+ASTERIODES = []
 
 class Nave(pygame.sprite.Sprite):
 
@@ -61,7 +61,13 @@ class Asteroide(pygame.sprite.Sprite):
         self.rect.top = 0
 
 
-
+def cargarAsteriodes():
+    asteroide1 = Asteroide("images/asteroide1.png", 22, 10)
+    asteroide2 = Asteroide("images/asteroide2.png", 236, 10)
+    asteroide3 = Asteroide("images/asteroide3.png", 450, 10)
+    ASTERIODES.append(asteroide1)
+    ASTERIODES.append(asteroide2)
+    ASTERIODES.append(asteroide3)
 
 def main():
     pygame.init()
@@ -76,25 +82,9 @@ def main():
     en_juego = True
 
     nave = Nave()
-    asteroide1 = Asteroide("images/asteroide1.png", 22, 10)
-    asteroide2 = Asteroide("images/asteroide2.png", 236, 10)
-    asteroide3 = Asteroide("images/asteroide3.png", 450, 10)
+    cargarAsteriodes()
 
     while True:
-        ventana.blit(fondo, (0, 0))
-        nave.dibujar(ventana)
-        asteroide1.dibujar(ventana)
-        asteroide2.dibujar(ventana)
-        asteroide3.dibujar(ventana)
-        
-        if en_juego:
-            aleatorio = random.randint(1, 3)
-            if aleatorio == 1:
-                asteroide1.mover()
-            elif aleatorio == 2:
-                asteroide2.mover()
-            elif aleatorio == 3:
-                asteroide3.mover()
 
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
@@ -112,18 +102,24 @@ def main():
                     elif evento.key == pygame.K_DOWN:
                         nave.moverAbajo()
 
-        if nave.rect.colliderect(asteroide1.rect):
-            nave.destruccion()
-            asteroide1.detener()
-            en_juego = False
-        if nave.rect.colliderect(asteroide2.rect):
-            nave.destruccion()
-            asteroide2.detener()
-            en_juego = False
-        if nave.rect.colliderect(asteroide3.rect):
-            nave.destruccion()
-            asteroide3.detener()
-            en_juego = False
+        # Cargo el fondo
+        ventana.blit(fondo, (0, 0))
+        
+        # Dibujo la nave
+        nave.dibujar(ventana)
+
+        # Dibujo los asteroides
+        for asteroide in ASTERIODES:
+            asteroide.dibujar(ventana)
+
+        if len(ASTERIODES) > 0:
+            for asteroide in ASTERIODES:
+                # Si choca con un asteroide
+                if asteroide.rect.colliderect(nave.rect):
+                    nave.destruccion()
+                    en_juego = False
+                    ASTERIODES.remove(asteroide)
+
 
         fps.tick(20) # 20 FPS
         pygame.display.update()
