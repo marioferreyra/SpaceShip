@@ -70,6 +70,10 @@ def cargarAsteriodes():
     ASTERIODES.append(asteroide3)
 
 
+def elegirAsteriode(lista_asteriodes):
+    return lista_asteriodes[random.randint(0, 2)]
+
+
 def main():
     pygame.init()
 
@@ -86,6 +90,8 @@ def main():
 
     nave = Nave()
     cargarAsteriodes()
+
+    asteroide = elegirAsteriode(ASTERIODES)
 
     while True:
 
@@ -112,15 +118,18 @@ def main():
         # Dibujo la nave
         nave.dibujar(ventana)
 
-        pos = random.randint(0, 2)
-        asteroide = ASTERIODES[pos]
         asteroide.dibujar(ventana)
         asteroide.mover()
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
             en_juego = False
-        
-        fps.tick(20) # 20 FPS
+
+        if asteroide.rect.top > ANCHO + 100:
+            asteroide.rect.top = 10
+            asteroide = elegirAsteriode(ASTERIODES)
+
+
+        fps.tick(60) # 20 FPS
         pygame.display.update()
 
 
