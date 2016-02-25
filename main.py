@@ -99,8 +99,15 @@ def cargarAsteriodes():
 def elegirAsteriode(lista_asteriodes):
     return lista_asteriodes[random.randint(0, 2)]
 
+
+def gameOver(superficie):
+    fuente = pygame.font.SysFont("comicsansms", 50)
+    texto = fuente.render("GAME OVER", True, BLANCO)
+    superficie.blit(texto, (200, 340))
+
 def botones(texto, x, y):
     pass
+
 
 def gameLoop():
     # Creacion Ventana
@@ -152,6 +159,7 @@ def gameLoop():
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
             en_juego = False
+            gameOver(ventana)
 
         if asteroide.rect.top > ANCHO + 100:
             if en_juego:
