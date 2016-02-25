@@ -112,20 +112,14 @@ def main():
         # Dibujo la nave
         nave.dibujar(ventana)
 
-        # Dibujo los asteroides
-        for asteroide in ASTERIODES:
-            asteroide.dibujar(ventana)
-
-        if len(ASTERIODES) > 0:
-            for asteroide in ASTERIODES:
-                asteroide.mover()
-                # Si choca con un asteroide
-                if asteroide.rect.colliderect(nave.rect):
-                    nave.destruccion()
-                    en_juego = False
-                    ASTERIODES.remove(asteroide)
-
-
+        pos = random.randint(0, 2)
+        asteroide = ASTERIODES[pos]
+        asteroide.dibujar(ventana)
+        asteroide.mover()
+        if asteroide.rect.colliderect(nave.rect):
+            nave.destruccion()
+            en_juego = False
+        
         fps.tick(20) # 20 FPS
         pygame.display.update()
 
