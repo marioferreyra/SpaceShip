@@ -5,9 +5,12 @@ import pygame
 import random
 from time import sleep
 
+BLANCO = (255, 255, 255)
 ANCHO = 600
 ALTO = 680
 ASTERIODES = []
+
+
 
 class Nave(pygame.sprite.Sprite):
 
@@ -61,6 +64,29 @@ class Asteroide(pygame.sprite.Sprite):
         self.rect.top = 0
 
 
+class Score(pygame.sprite.Sprite):
+
+    def __init__(self, posX, posY):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.posX = posX
+        self.posY = posY
+        self.puntaje = 0
+        self.fuente = pygame.font.SysFont("comicsansms", 25)
+
+    def aumentar(self):
+        self.puntaje += 1
+
+    def resetear(self):
+        self.puntaje = 0
+
+    def dibujar(self, superficie):
+        texto = self.fuente.render("Score: " + str(self.puntaje), True, BLANCO)
+        superficie.blit(texto, (self.posX, self.posY))
+
+
+
+
 def cargarAsteriodes():
     asteroide1 = Asteroide("images/asteroide1.png", 22, 10)
     asteroide2 = Asteroide("images/asteroide2.png", 236, 10)
@@ -73,15 +99,15 @@ def cargarAsteriodes():
 def elegirAsteriode(lista_asteriodes):
     return lista_asteriodes[random.randint(0, 2)]
 
+def botones(texto, x, y):
+    pass
 
-def main():
-    pygame.init()
-
+def gameLoop():
     # Creacion Ventana
     ventana = pygame.display.set_mode((ANCHO, ALTO))
 
     # Titulo de ventana
-    pygame.display.set_caption("SpaceShip")
+    pygame.display.set_caption("Space Ship")
 
     fondo = pygame.image.load("images/fondo.jpg")
     fps = pygame.time.Clock()
@@ -89,6 +115,7 @@ def main():
     en_juego = True
 
     nave = Nave()
+    score = Score(0, 0)
     cargarAsteriodes()
 
     asteroide = elegirAsteriode(ASTERIODES)
@@ -117,20 +144,29 @@ def main():
         
         # Dibujo la nave
         nave.dibujar(ventana)
+        score.dibujar(ventana)
 
-        asteroide.dibujar(ventana)
-        asteroide.mover()
+        if en_juego:
+            asteroide.dibujar(ventana)
+            asteroide.mover()
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
             en_juego = False
 
         if asteroide.rect.top > ANCHO + 100:
+            if en_juego:
+                score.aumentar()
             asteroide.rect.top = 10
             asteroide = elegirAsteriode(ASTERIODES)
 
 
-        fps.tick(60) # 20 FPS
+        fps.tick(20) # 20 FPS
         pygame.display.update()
+
+
+def main():
+    pygame.init()
+    gameLoop()
 
 
 main()
