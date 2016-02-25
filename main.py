@@ -31,16 +31,14 @@ class Nave(pygame.sprite.Sprite):
         self.imagen = self.imagen_explosion
 
     def moverDerecha(self):
-        self.rect.left += 100
+        if self.rect.left <= 450:
+            self.rect.left += 25
+            print self.rect.left
 
     def moverIzquierda(self):
-        self.rect.left -= 100
-
-    def moverArriba(self):
-        self.rect.top -= 100
-
-    def moverAbajo(self):
-        self.rect.top += 100
+        if self.rect.left >= 22:
+            self.rect.left -= 25
+            print self.rect.left
 
 
 class Asteroide(pygame.sprite.Sprite):
@@ -72,7 +70,7 @@ class Score(pygame.sprite.Sprite):
         self.posX = posX
         self.posY = posY
         self.puntaje = 0
-        self.fuente = pygame.font.SysFont("comicsansms", 25)
+        self.fuente = pygame.font.SysFont("comicsansms", 40)
 
     def aumentar(self):
         self.puntaje += 1
@@ -85,12 +83,14 @@ class Score(pygame.sprite.Sprite):
         superficie.blit(texto, (self.posX, self.posY))
 
 
-
+def moverAsteroides(lista_asteriodes):
+    for asteroide in lista_asteriodes:
+        asteroide.rect.left = random.randint(22, 450)
 
 def cargarAsteriodes():
-    asteroide1 = Asteroide("images/asteroide1.png", 22, 10)
-    asteroide2 = Asteroide("images/asteroide2.png", 236, 10)
-    asteroide3 = Asteroide("images/asteroide3.png", 450, 10)
+    asteroide1 = Asteroide("images/asteroide1.png", 22, -50)
+    asteroide2 = Asteroide("images/asteroide2.png", 236, -50)
+    asteroide3 = Asteroide("images/asteroide3.png", 450, -50)
     ASTERIODES.append(asteroide1)
     ASTERIODES.append(asteroide2)
     ASTERIODES.append(asteroide3)
@@ -141,10 +141,6 @@ def gameLoop():
                         nave.moverIzquierda()
                     elif evento.key == pygame.K_RIGHT:
                         nave.moverDerecha()
-                    elif evento.key == pygame.K_UP:
-                        nave.moverArriba()
-                    elif evento.key == pygame.K_DOWN:
-                        nave.moverAbajo()
 
         # Cargo el fondo
         ventana.blit(fondo, (0, 0))
@@ -165,6 +161,7 @@ def gameLoop():
             if en_juego:
                 score.aumentar()
             asteroide.rect.top = 10
+            moverAsteroides(ASTERIODES)
             asteroide = elegirAsteriode(ASTERIODES)
 
 
