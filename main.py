@@ -9,7 +9,7 @@ BLANCO = (255, 255, 255)
 ANCHO = 600
 ALTO = 680
 ASTERIODES = []
-
+ventana = pygame.display.set_mode((ANCHO, ALTO))
 
 
 class Nave(pygame.sprite.Sprite):
@@ -33,12 +33,10 @@ class Nave(pygame.sprite.Sprite):
     def moverDerecha(self):
         if self.rect.left <= 450:
             self.rect.left += 25
-            print self.rect.left
 
     def moverIzquierda(self):
         if self.rect.left >= 22:
             self.rect.left -= 25
-            print self.rect.left
 
 
 class Asteroide(pygame.sprite.Sprite):
@@ -83,9 +81,36 @@ class Score(pygame.sprite.Sprite):
         superficie.blit(texto, (self.posX, self.posY))
 
 
+class Cursor(pygame.Rect):
+
+    def __init__(self):
+        pygame.Rect.__init__(self, 0, 0, 1, 1)
+
+    def update(self):
+        self.left, self.top = pygame.mouse.get_pos()
+
+
+class Boton(pygame.sprite.Sprite):
+
+    def __init__(self, imagen, posX=300, posY=340):
+        pygame.sprite.Sprite.__init__(self)
+
+        self.imagen = pygame.image.load(imagen)
+        self.rect = self.imagen.get_rect()
+        self.rect.left = posX
+        self.rect.top = posY
+
+    def update(self, superficie, cursor):
+        if cursor.colliderect(self.rect):
+            pass
+        
+        superficie.blit(self.imagen, self.rect)
+
+
 def moverAsteroides(lista_asteriodes):
     for asteroide in lista_asteriodes:
         asteroide.rect.left = random.randint(22, 450)
+
 
 def cargarAsteriodes():
     asteroide1 = Asteroide("images/asteroide1.png", 22, -50)
@@ -100,18 +125,44 @@ def elegirAsteriode(lista_asteriodes):
     return lista_asteriodes[random.randint(0, 2)]
 
 
+def gameIntro():
+    cursor = Cursor()
+    boton = Boton("images/btn_go.png")
+
+    clock = pygame.time.Clock()
+
+    click = False
+
+    while not click:
+        for evento in pygame.event.get():
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                if cursor.colliderect(boton.rect):
+                    click = True
+
+        ventana.fill(BLANCO)
+
+        cursor.update()
+        boton.update(ventana, cursor)
+
+        pygame.display.update()
+        clock.tick(15)
+
+
+
 def gameOver(superficie):
     fuente = pygame.font.SysFont("comicsansms", 50)
     texto = fuente.render("GAME OVER", True, BLANCO)
     superficie.blit(texto, (200, 340))
 
-def botones(texto, x, y):
-    pass
-
 
 def gameLoop():
     # Creacion Ventana
-    ventana = pygame.display.set_mode((ANCHO, ALTO))
+    # Ver de acomodar bien las variables
+    # ventana = pygame.display.set_mode((ANCHO, ALTO))
 
     # Titulo de ventana
     pygame.display.set_caption("Space Ship")
@@ -166,11 +217,13 @@ def gameLoop():
 
 
         fps.tick(20) # 20 FPS
+
         pygame.display.update()
 
 
 def main():
     pygame.init()
+    gameIntro()
     gameLoop()
 
 
