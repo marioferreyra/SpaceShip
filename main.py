@@ -100,10 +100,7 @@ class Boton(pygame.sprite.Sprite):
         self.rect.left = posX
         self.rect.top = posY
 
-    def update(self, superficie, cursor):
-        if cursor.colliderect(self.rect):
-            pass
-        
+    def update(self, superficie):
         superficie.blit(self.imagen, self.rect)
 
 
@@ -125,11 +122,27 @@ def elegirAsteriode(lista_asteriodes):
     return lista_asteriodes[random.randint(0, 2)]
 
 
+def gameName(superficie):
+    fuente = pygame.font.SysFont("comicsansms", 50)
+    texto = fuente.render("Space Ship", True, BLANCO)
+    superficie.blit(texto, (200, 100))
+
+
+def gameOver(superficie):
+    fuente = pygame.font.SysFont("comicsansms", 50)
+    texto = fuente.render("GAME OVER", True, BLANCO)
+    superficie.blit(texto, (200, 340))
+
+
 def gameIntro():
     cursor = Cursor()
-    boton = Boton("images/btn_go.png")
+
+    btn_play = Boton("images/btn_play.png", 228, 200)
+    btn_quit = Boton("images/btn_quit.png", 228, 300)
 
     clock = pygame.time.Clock()
+
+    fondo = pygame.image.load("images/fondo.jpg")
 
     click = False
 
@@ -140,23 +153,21 @@ def gameIntro():
                 quit()
 
             if evento.type == pygame.MOUSEBUTTONDOWN:
-                if cursor.colliderect(boton.rect):
+                if cursor.colliderect(btn_play.rect):
                     click = True
+                if cursor.colliderect(btn_quit.rect):
+                    pygame.quit()
+                    quit()
 
-        ventana.fill(BLANCO)
+        ventana.blit(fondo, (0, 0))
 
         cursor.update()
-        boton.update(ventana, cursor)
+        gameName(ventana)
+        btn_play.update(ventana)
+        btn_quit.update(ventana)
 
         pygame.display.update()
         clock.tick(15)
-
-
-
-def gameOver(superficie):
-    fuente = pygame.font.SysFont("comicsansms", 50)
-    texto = fuente.render("GAME OVER", True, BLANCO)
-    superficie.blit(texto, (200, 340))
 
 
 def gameLoop():
