@@ -70,6 +70,9 @@ class Score(pygame.sprite.Sprite):
         self.puntaje = 0
         self.fuente = pygame.font.SysFont("comicsansms", 40)
 
+    def getPuntaje(self):
+        return self.puntaje
+
     def aumentar(self):
         self.puntaje += 1
 
@@ -134,6 +137,32 @@ def gameOver(superficie):
     superficie.blit(texto, (200, 340))
 
 
+def printHighScore(superficie):
+    fuente = pygame.font.SysFont("comicsansms", 50)
+
+    with open("highscore.txt", "r") as f:
+        lineas = f.readlines()
+        for l in lineas:
+            texto = fuente.render("High Score: " + l, True, BLANCO)
+        f.close()
+
+    superficie.blit(texto, (200, 400))
+
+
+
+def getHighScore():
+    with open("highscore.txt", "r") as f:
+        lineas = f.readlines()
+        for l in lineas:
+            return int(l)
+        f.close()
+
+def setHighScore(new_score):
+    with open("highscore.txt", "w") as f:
+        f.writelines(str(new_score))
+        f.close()
+
+
 def gameIntro():
     cursor = Cursor()
 
@@ -165,6 +194,7 @@ def gameIntro():
         gameName(ventana)
         btn_play.update(ventana)
         btn_quit.update(ventana)
+        printHighScore(ventana)
 
         pygame.display.update()
         clock.tick(15)
@@ -214,10 +244,17 @@ def gameLoop():
         if en_juego:
             asteroide.dibujar(ventana)
             asteroide.mover()
+
+        # GAME OVER
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
             en_juego = False
             gameOver(ventana)
+
+            # Seteo el nuevo puntaje mas alto
+            mi_puntaje = score.getPuntaje() # Tipo int
+            if mi_puntaje > getHighScore():
+                setHighScore(score.getPuntaje())
 
         if asteroide.rect.top > ANCHO + 100:
             if en_juego:
