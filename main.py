@@ -193,9 +193,9 @@ def newText(texto, superficie, posicion=(0, 0), color=NEGRO, length=12):
 
 def getHighScore():
     """
-    Obtiene el puntaje del archivo 'highscore.txt'.
+    Obtiene el puntaje del archivo 'high_score.txt'.
     """
-    with open("highscore.txt", "r") as f:
+    with open("high_score.txt", "r") as f:
         lineas = f.readlines()
         for l in lineas:
             return int(l)
@@ -203,9 +203,9 @@ def getHighScore():
 
 def setHighScore(new_score):
     """
-    Setea un nuevo puntaje en el archivo 'highscore.txt'.
+    Setea un nuevo puntaje en el archivo 'high_score.txt'.
     """
-    with open("highscore.txt", "w") as f:
+    with open("high_score.txt", "w") as f:
         f.writelines(str(new_score))
         f.close()
 
