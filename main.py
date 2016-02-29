@@ -210,6 +210,31 @@ def setHighScore(new_score):
         f.close()
 
 
+def pause(ventana, en_pausa):
+    """
+    Menu de Pausa del juego.
+    """
+    fps = pygame.time.Clock()
+
+    while en_pausa:
+        for evento in pygame.event.get():
+            # Click en la "X" de la ventana
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            if evento.type == pygame.KEYDOWN:
+                    # Despausa el juego
+                    if evento.key == pygame.K_p:
+                        en_pausa = False
+
+        newText("Paused", ventana, (230, 300), BLANCO, 50)
+        
+        pygame.display.update()
+        
+        fps.tick(15)
+
+
 def gameMenu(ventana):
     """
     Menu principal del juego.
@@ -226,8 +251,8 @@ def gameMenu(ventana):
     click_button = False
 
     while not click_button:
-        # Click en la "X" de la ventana
         for evento in pygame.event.get():
+            # Click en la "X" de la ventana
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 quit()
@@ -259,11 +284,6 @@ def gameMenu(ventana):
 
 
 def gameLoop(ventana):
-    
-
-    # Titulo de ventana
-
-
     # Fondo del juego
     fondo = pygame.image.load("images/fondo.jpg")
     
@@ -271,6 +291,7 @@ def gameLoop(ventana):
     fps = pygame.time.Clock()
 
     en_juego = True
+    en_pausa = False
 
     nave = Nave()
     score = Score(0, 0)
@@ -279,7 +300,6 @@ def gameLoop(ventana):
     asteroide = elegirAsteriode(ASTERIODES)
 
     while True:
-
         for evento in pygame.event.get():
             # Click en la "X" de la ventana
             if evento.type == pygame.QUIT:
@@ -287,12 +307,15 @@ def gameLoop(ventana):
                 sys.exit()
 
             if en_juego:
-                # Movimientos de la nave
                 if evento.type == pygame.KEYDOWN:
-                    # Mover a la izquierda
+                    # Pausa el juego
+                    if evento.key == pygame.K_p:
+                        en_pausa = True
+                        pause(ventana, en_pausa)
+                    # Mover nave a la izquierda
                     if evento.key == pygame.K_LEFT:
                         nave.moverIzquierda()
-                    # Mover a la derecha
+                    # Mover nave a la derecha
                     elif evento.key == pygame.K_RIGHT:
                         nave.moverDerecha()
 
