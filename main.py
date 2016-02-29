@@ -3,17 +3,23 @@
 import sys
 import pygame
 import random
-from time import sleep
 
+# Colores
 BLANCO = (255, 255, 255)
+NEGRO = (0, 0, 0)
+
+# Tamaño de la ventana del juego
 ANCHO = 600
 ALTO = 680
+
+# Lista de asteriodes
 ASTERIODES = []
-ventana = pygame.display.set_mode((ANCHO, ALTO))
 
 
 class Nave(pygame.sprite.Sprite):
-
+    """
+    Clase para la Nave espacial.
+    """
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
@@ -25,22 +31,37 @@ class Nave(pygame.sprite.Sprite):
         self.rect.centery = 610
     
     def dibujar(self, superficie):
+        """
+        Dibuja la nave espacial en la superficie indicada.
+        """
         superficie.blit(self.imagen, self.rect)
 
     def destruccion(self):
+        """
+        Cambia la imagen principal de la nave por una explosion.
+        """
         self.imagen = self.imagen_explosion
 
     def moverDerecha(self):
+        """
+        Mueve la nave hacia la derecha.
+        """
         if self.rect.left <= 450:
             self.rect.left += 25
 
     def moverIzquierda(self):
+        """
+        Mueve la nave hacia la izquierda.
+        """
         if self.rect.left >= 22:
             self.rect.left -= 25
 
 
-class Asteroide(pygame.sprite.Sprite):
 
+class Asteroide(pygame.sprite.Sprite):
+    """
+    Clase para los Asteroides del juego.
+    """
     def __init__(self, path_image, posX=0, posY=0):
         pygame.sprite.Sprite.__init__(self)
 
@@ -51,17 +72,22 @@ class Asteroide(pygame.sprite.Sprite):
         self.rect.top = posY
 
     def dibujar(self, superficie):
+        """
+        Dibuja el asteroide en la superficie indicada.
+        """
         superficie.blit(self.imagen, self.rect)
 
     def mover(self):
+        """
+        Mueve el asteroide hacia abajo.
+        """
         self.rect.top += 10
-
-    def detener(self):
-        self.rect.top = 0
 
 
 class Score(pygame.sprite.Sprite):
-
+    """
+    Clase para el puntaje del juego.
+    """
     def __init__(self, posX, posY):
         pygame.sprite.Sprite.__init__(self)
 
@@ -71,48 +97,68 @@ class Score(pygame.sprite.Sprite):
         self.fuente = pygame.font.SysFont("comicsansms", 40)
 
     def getPuntaje(self):
+        """
+        Obtiene el puntaje actual del juego.
+        """
         return self.puntaje
 
     def aumentar(self):
+        """
+        Aumenta el puntaje del juego.
+        """
         self.puntaje += 1
 
-    def resetear(self):
+    def reset(self):
+        """
+        Resetea el puntaje del juego a 0.
+        """
         self.puntaje = 0
 
     def dibujar(self, superficie):
+        """
+        Dibuja el puntaje en la superficie indicada.
+        """
         texto = self.fuente.render("Score: " + str(self.puntaje), True, BLANCO)
         superficie.blit(texto, (self.posX, self.posY))
 
 
 class Cursor(pygame.Rect):
-
+    """
+    Clase para el cursor del mouse.
+    """
     def __init__(self):
         pygame.Rect.__init__(self, 0, 0, 1, 1)
 
     def update(self):
+        """
+        Obtiene la posicion actual del cursor.
+        """
         self.left, self.top = pygame.mouse.get_pos()
 
 
 class Boton(pygame.sprite.Sprite):
-
-    def __init__(self, imagen, posX=300, posY=340):
+    """
+    Clase para los botones.
+    """
+    def __init__(self, path_imagen, posX=300, posY=340):
         pygame.sprite.Sprite.__init__(self)
 
-        self.imagen = pygame.image.load(imagen)
+        self.imagen = pygame.image.load(path_imagen)
         self.rect = self.imagen.get_rect()
         self.rect.left = posX
         self.rect.top = posY
 
-    def update(self, superficie):
+    def dibujar(self, superficie):
+        """
+        Dibuja el boton en la superficie indicada.
+        """
         superficie.blit(self.imagen, self.rect)
 
 
-def moverAsteroides(lista_asteriodes):
-    for asteroide in lista_asteriodes:
-        asteroide.rect.left = random.randint(22, 450)
-
-
 def cargarAsteriodes():
+    """
+    Agrega una serie de objetos asteriodes a la lista ASTERIODES.
+    """
     asteroide1 = Asteroide("images/asteroide1.png", 22, -50)
     asteroide2 = Asteroide("images/asteroide2.png", 236, -50)
     asteroide3 = Asteroide("images/asteroide3.png", 450, -50)
@@ -122,35 +168,33 @@ def cargarAsteriodes():
 
 
 def elegirAsteriode(lista_asteriodes):
+    """
+    Elige un asteroide de forma random de una lista de asteroides.
+    """
     return lista_asteriodes[random.randint(0, 2)]
 
 
-def gameName(superficie):
-    fuente = pygame.font.SysFont("comicsansms", 50)
-    texto = fuente.render("Space Ship", True, BLANCO)
-    superficie.blit(texto, (200, 100))
+def moverAsteroides(lista_asteriodes):
+    """
+    Mueve los asteroides de la lista de asteriodes a una posicion aleatoria.
+    """
+    for asteroide in lista_asteriodes:
+        asteroide.rect.left = random.randint(22, 450)
 
 
-def gameOver(superficie):
-    fuente = pygame.font.SysFont("comicsansms", 50)
-    texto = fuente.render("GAME OVER", True, BLANCO)
-    superficie.blit(texto, (200, 340))
-
-
-def printHighScore(superficie):
-    fuente = pygame.font.SysFont("comicsansms", 50)
-
-    with open("highscore.txt", "r") as f:
-        lineas = f.readlines()
-        for l in lineas:
-            texto = fuente.render("High Score: " + l, True, BLANCO)
-        f.close()
-
-    superficie.blit(texto, (200, 400))
-
+def newText(texto, superficie, posicion=(0, 0), color=NEGRO, length=12):
+    """
+    Metodo generico para crear texto.
+    """
+    fuente = pygame.font.SysFont("comicsansms", length)
+    text = fuente.render(texto, True, color)
+    superficie.blit(text, posicion)
 
 
 def getHighScore():
+    """
+    Obtiene el puntaje del archivo 'highscore.txt'.
+    """
     with open("highscore.txt", "r") as f:
         lineas = f.readlines()
         for l in lineas:
@@ -158,32 +202,42 @@ def getHighScore():
         f.close()
 
 def setHighScore(new_score):
+    """
+    Setea un nuevo puntaje en el archivo 'highscore.txt'.
+    """
     with open("highscore.txt", "w") as f:
         f.writelines(str(new_score))
         f.close()
 
 
-def gameIntro():
+def gameMenu(ventana):
+    """
+    Menu principal del juego.
+    """
     cursor = Cursor()
 
     btn_play = Boton("images/btn_play.png", 228, 200)
     btn_quit = Boton("images/btn_quit.png", 228, 300)
 
-    clock = pygame.time.Clock()
+    fps = pygame.time.Clock()
 
     fondo = pygame.image.load("images/fondo.jpg")
 
-    click = False
+    click_button = False
 
-    while not click:
+    while not click_button:
+        # Click en la "X" de la ventana
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 quit()
 
+            # Click del Mouse
             if evento.type == pygame.MOUSEBUTTONDOWN:
+                # Click en el boton de "Play Game"
                 if cursor.colliderect(btn_play.rect):
-                    click = True
+                    click_button = True
+                # Click en el boton de "Quit"
                 if cursor.colliderect(btn_quit.rect):
                     pygame.quit()
                     quit()
@@ -191,24 +245,29 @@ def gameIntro():
         ventana.blit(fondo, (0, 0))
 
         cursor.update()
-        gameName(ventana)
-        btn_play.update(ventana)
-        btn_quit.update(ventana)
-        printHighScore(ventana)
+
+        # Nombre del juego
+        newText("Space Ship", ventana, (200, 100), BLANCO, 50)
+        btn_play.dibujar(ventana)
+        btn_quit.dibujar(ventana)
+
+        # Muestro el High Score local
+        newText("High Score: " + str(getHighScore()), ventana, (200, 400), BLANCO, 50)
 
         pygame.display.update()
-        clock.tick(15)
+        fps.tick(15)
 
 
-def gameLoop():
-    # Creacion Ventana
-    # Ver de acomodar bien las variables
-    # ventana = pygame.display.set_mode((ANCHO, ALTO))
+def gameLoop(ventana):
+    
 
     # Titulo de ventana
-    pygame.display.set_caption("Space Ship")
 
+
+    # Fondo del juego
     fondo = pygame.image.load("images/fondo.jpg")
+    
+    # FPS en que se movera el juego
     fps = pygame.time.Clock()
 
     en_juego = True
@@ -222,15 +281,18 @@ def gameLoop():
     while True:
 
         for evento in pygame.event.get():
+            # Click en la "X" de la ventana
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
             if en_juego:
-                # Movimientos
+                # Movimientos de la nave
                 if evento.type == pygame.KEYDOWN:
+                    # Mover a la izquierda
                     if evento.key == pygame.K_LEFT:
                         nave.moverIzquierda()
+                    # Mover a la derecha
                     elif evento.key == pygame.K_RIGHT:
                         nave.moverDerecha()
 
@@ -239,23 +301,26 @@ def gameLoop():
         
         # Dibujo la nave
         nave.dibujar(ventana)
+        # Dibujo el puntaje
         score.dibujar(ventana)
 
+        # Si estoy jugando, dibujo los asteroides y los muevo
         if en_juego:
             asteroide.dibujar(ventana)
             asteroide.mover()
 
-        # GAME OVER
+        # Si choco con un asteroide
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
             en_juego = False
-            gameOver(ventana)
-
+            newText("GAME OVER", ventana, (200, 340), BLANCO, 50)
+            
             # Seteo el nuevo puntaje mas alto
             mi_puntaje = score.getPuntaje() # Tipo int
             if mi_puntaje > getHighScore():
                 setHighScore(score.getPuntaje())
 
+        # Si el asteroide no choca con la nave
         if asteroide.rect.top > ANCHO + 100:
             if en_juego:
                 score.aumentar()
@@ -263,16 +328,20 @@ def gameLoop():
             moverAsteroides(ASTERIODES)
             asteroide = elegirAsteriode(ASTERIODES)
 
-
         fps.tick(20) # 20 FPS
 
         pygame.display.update()
 
 
 def main():
-    pygame.init()
-    gameIntro()
-    gameLoop()
+    pygame.init() # Inicializacion del los modulos de Pygame
+    
+    # Creacion Ventana
+    ventana = pygame.display.set_mode((ANCHO, ALTO))
+    pygame.display.set_caption("Space Ship")
+    
+    gameMenu(ventana)
+    gameLoop(ventana)
 
 
 main()
