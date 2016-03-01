@@ -375,8 +375,11 @@ def gameLoop(ventana):
     btn_quit = Boton("images/quit.png", 235, 320)
 
     cargarAsteriodes()
+    moverAsteroides(ASTERIODES)
 
     asteroide = elegirAsteriode(ASTERIODES)
+
+    is_highscore = False
 
     while True:
         for evento in pygame.event.get():
@@ -435,7 +438,11 @@ def gameLoop(ventana):
             mi_puntaje = score.getPuntaje() # Tipo int
 
             if mi_puntaje > getHighScore():
+                is_highscore = True
                 setHighScore(score.getPuntaje())
+
+            if is_highscore:
+                newText("New High Score: " + str(mi_puntaje), ventana, (170, 380), BLANCO, 50)
 
         # Si el asteroide no choca con la nave
         if asteroide.rect.top > ANCHO + 100:
