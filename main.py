@@ -307,9 +307,9 @@ def gameMenu(ventana):
     """
     cursor = Cursor()
 
-    btn_play = Boton("images/btn_play.png", 228, 200)
-    btn_help = Boton("images/btn_help.png", 228, 300)
-    btn_quit = Boton("images/btn_quit.png", 228, 400)
+    btn_play = Boton("images/play.png", 228, 200)
+    btn_help = Boton("images/help.png", 228, 300)
+    btn_quit = Boton("images/quit.png", 228, 400)
 
     fps = pygame.time.Clock()
 
@@ -371,8 +371,8 @@ def gameLoop(ventana):
     nave = Nave()
     score = Score(0, 0)
 
-    btn_play_again = Boton("images/btn_play_again.png", 235, 250)
-    btn_quit = Boton("images/btn_quit.png", 235, 320)
+    btn_play_again = Boton("images/play_again.png", 235, 250)
+    btn_quit = Boton("images/quit.png", 235, 320)
 
     cargarAsteriodes()
 
@@ -433,7 +433,7 @@ def gameLoop(ventana):
             
             # Seteo el nuevo puntaje mas alto
             mi_puntaje = score.getPuntaje() # Tipo int
-            
+
             if mi_puntaje > getHighScore():
                 setHighScore(score.getPuntaje())
 
