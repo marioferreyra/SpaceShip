@@ -67,7 +67,6 @@ class Nave(pygame.sprite.Sprite):
             self.rect.left -= 25
 
 
-
 class Asteroide(pygame.sprite.Sprite):
     """
     Clase para los Asteroides del juego.
@@ -91,7 +90,7 @@ class Asteroide(pygame.sprite.Sprite):
         """
         Mueve el asteroide hacia abajo.
         """
-        self.rect.top += 10
+        self.rect.top += 18
 
     def detener(self):
         """
@@ -497,6 +496,10 @@ def main():
     # Nombre de la ventana
     pygame.display.set_caption("Space Ship")
     
+    # Icono del juego
+    icon = pygame.image.load("images/icon.png")
+    pygame.display.set_icon(icon)
+
     # Musica de fondo
     pygame.mixer.music.load("sounds/sonido_fondo.mp3")
     pygame.mixer.music.play()
