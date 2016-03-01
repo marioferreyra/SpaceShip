@@ -325,6 +325,7 @@ def gameMenu(ventana, sound_click):
     fps = pygame.time.Clock()
 
     fondo = pygame.image.load("images/fondo.jpg")
+    logo = pygame.image.load("images/logo.png")
 
     click_button = False
 
@@ -356,7 +357,8 @@ def gameMenu(ventana, sound_click):
         cursor.update()
 
         # Nombre del juego
-        newText("Space Ship", ventana, (200, 100), BLANCO, 50)
+        ventana.blit(logo, (100, 100))
+
         btn_play.dibujar(ventana)
         btn_help.dibujar(ventana)
         btn_quit.dibujar(ventana)
