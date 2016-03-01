@@ -29,7 +29,9 @@ class Nave(pygame.sprite.Sprite):
         
         self.rect.centerx = ANCHO/2
         self.rect.centery = 610
-    
+
+        self.sonido_explosion = pygame.mixer.Sound("sounds/explosion.wav")
+
     def dibujar(self, superficie):
         """
         Dibuja la nave espacial en la superficie indicada.
@@ -41,6 +43,14 @@ class Nave(pygame.sprite.Sprite):
         Cambia la imagen principal de la nave por una explosion.
         """
         self.imagen = self.imagen_explosion
+
+    def sonidoDestruccion(self, is_destroy):
+        """
+        Reproduce el sonido de destruccion de la nave.
+        """
+        if is_destroy:
+            self.sonido_explosion.play()
+
 
     def moverDerecha(self):
         """
@@ -249,7 +259,7 @@ def pause(ventana, en_pausa):
         fps.tick(15)
 
 
-def helpMenu(ventana):
+def helpMenu(ventana, sound_click):
     """
     Menu de ayuda del juego.
     """
@@ -277,6 +287,7 @@ def helpMenu(ventana):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Game"
                 if cursor.colliderect(btn_back.rect):
+                    sound_click.play()
                     is_back = True
 
         ventana.blit(fondo, (0, 0))
@@ -301,7 +312,7 @@ def helpMenu(ventana):
         fps.tick(15)
 
 
-def gameMenu(ventana):
+def gameMenu(ventana, sound_click):
     """
     Menu principal del juego.
     """
@@ -328,12 +339,15 @@ def gameMenu(ventana):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Game"
                 if cursor.colliderect(btn_play.rect):
+                    sound_click.play()
                     click_button = True
                 # Click en el boton de "Help"
                 if cursor.colliderect(btn_help.rect):
-                    helpMenu(ventana)
+                    sound_click.play()
+                    helpMenu(ventana, sound_click)
                 # Click en el boton de "Quit"
                 if cursor.colliderect(btn_quit.rect):
+                    sound_click.play()
                     pygame.quit()
                     quit()
 
@@ -354,7 +368,7 @@ def gameMenu(ventana):
         fps.tick(15)
 
 
-def gameLoop(ventana):
+def gameLoop(ventana, sound_click):
     """
     Loop principal del juego.
     """
@@ -380,6 +394,7 @@ def gameLoop(ventana):
     asteroide = elegirAsteriode(ASTERIODES)
 
     is_highscore = False
+    is_destroy = True # Para que solo reproduzca el sonido una sola vez
 
     while True:
         for evento in pygame.event.get():
@@ -405,10 +420,13 @@ def gameLoop(ventana):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Again"
                 if cursor.colliderect(btn_play_again.rect):
+                    sound_click.play()
                     detenerAsteriodes(ASTERIODES)
-                    gameLoop(ventana)
+                    pygame.mixer.music.play()
+                    gameLoop(ventana, sound_click)
                 # Click en el boton de "Quit"
                 if cursor.colliderect(btn_quit.rect):
+                    sound_click.play()
                     pygame.quit()
                     sys.exit()
 
@@ -429,7 +447,9 @@ def gameLoop(ventana):
         # Si choco con un asteroide
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
+            nave.sonidoDestruccion(is_destroy)
             en_juego = False
+            is_destroy = False # Para que solo reproduzca el sonido una sola vez
             newText("GAME OVER", ventana, (200, 200), BLANCO, 50)
             btn_play_again.dibujar(ventana)
             btn_quit.dibujar(ventana)
@@ -442,7 +462,7 @@ def gameLoop(ventana):
                 setHighScore(score.getPuntaje())
 
             if is_highscore:
-                newText("New High Score: " + str(mi_puntaje), ventana, (170, 380), BLANCO, 50)
+                newText("New High Score: " + str(mi_puntaje), ventana, (170, 390), BLANCO, 50)
 
         # Si el asteroide no choca con la nave
         if asteroide.rect.top > ANCHO + 100:
@@ -451,6 +471,10 @@ def gameLoop(ventana):
             asteroide.rect.top = 10
             moverAsteroides(ASTERIODES)
             asteroide = elegirAsteriode(ASTERIODES)
+
+        if not en_juego:
+            # De a poco se va apagando la musica de fondo
+            pygame.mixer.music.fadeout(3000)
 
         cursor.update()
 
@@ -464,11 +488,18 @@ def main():
     
     # Creacion Ventana
     ventana = pygame.display.set_mode((ANCHO, ALTO))
+    
     # Nombre de la ventana
     pygame.display.set_caption("Space Ship")
     
-    gameMenu(ventana)
-    gameLoop(ventana)
+    # Musica de fondo
+    pygame.mixer.music.load("sounds/sonido_fondo.mp3")
+    pygame.mixer.music.play()
+    
+    sound_click = pygame.mixer.Sound("sounds/click.wav") # Sonido de click
+
+    gameMenu(ventana, sound_click)
+    gameLoop(ventana, sound_click)
 
 
 main()
