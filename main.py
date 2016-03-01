@@ -235,6 +235,58 @@ def pause(ventana, en_pausa):
         fps.tick(15)
 
 
+def helpMenu(ventana):
+    """
+    Menu de ayuda del juego.
+    """
+    cursor = Cursor()
+
+    fondo = pygame.image.load("images/fondo.jpg")
+    flecha_izquierda = pygame.image.load("images/flecha_izquierda.png")
+    flecha_derecha = pygame.image.load("images/flecha_derecha.png")
+    btn_p = pygame.image.load("images/letra_p.png")
+
+    btn_back = Boton("images/back.png", 228, 600)
+
+    fps = pygame.time.Clock()
+
+    is_back = False
+
+    while not is_back:
+        for evento in pygame.event.get():
+            # Click en la "X" de la ventana
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            # Click del Mouse
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                # Click en el boton de "Play Game"
+                if cursor.colliderect(btn_back.rect):
+                    is_back = True
+
+        ventana.blit(fondo, (0, 0))
+        
+        cursor.update()
+
+        newText("Help", ventana, (210, 50), BLANCO, 100)
+
+        ventana.blit(flecha_izquierda, (100, 200))
+        newText("Ship move left", ventana, (200, 200), BLANCO, 50)
+
+        ventana.blit(flecha_derecha, (100, 300))
+        newText("Ship move right", ventana, (200, 300), BLANCO, 50)
+
+        ventana.blit(btn_p, (100, 400))
+        newText("Pause the game", ventana, (200, 400), BLANCO, 50)
+
+        btn_back.dibujar(ventana)
+
+        pygame.display.update()
+        
+        fps.tick(15)
+
+
 def gameMenu(ventana):
     """
     Menu principal del juego.
@@ -242,7 +294,8 @@ def gameMenu(ventana):
     cursor = Cursor()
 
     btn_play = Boton("images/btn_play.png", 228, 200)
-    btn_quit = Boton("images/btn_quit.png", 228, 300)
+    btn_help = Boton("images/btn_help.png", 228, 300)
+    btn_quit = Boton("images/btn_quit.png", 228, 400)
 
     fps = pygame.time.Clock()
 
@@ -262,6 +315,9 @@ def gameMenu(ventana):
                 # Click en el boton de "Play Game"
                 if cursor.colliderect(btn_play.rect):
                     click_button = True
+                # Click en el boton de "Help"
+                if cursor.colliderect(btn_help.rect):
+                    helpMenu(ventana)
                 # Click en el boton de "Quit"
                 if cursor.colliderect(btn_quit.rect):
                     pygame.quit()
@@ -274,16 +330,20 @@ def gameMenu(ventana):
         # Nombre del juego
         newText("Space Ship", ventana, (200, 100), BLANCO, 50)
         btn_play.dibujar(ventana)
+        btn_help.dibujar(ventana)
         btn_quit.dibujar(ventana)
 
         # Muestro el High Score local
-        newText("High Score: " + str(getHighScore()), ventana, (200, 400), BLANCO, 50)
+        newText("High Score: " + str(getHighScore()), ventana, (200, 500), BLANCO, 50)
 
         pygame.display.update()
         fps.tick(15)
 
 
 def gameLoop(ventana):
+    """
+    Loop principal del juego.
+    """
     # Fondo del juego
     fondo = pygame.image.load("images/fondo.jpg")
     
@@ -293,8 +353,12 @@ def gameLoop(ventana):
     en_juego = True
     en_pausa = False
 
+    cursor = Cursor()
     nave = Nave()
     score = Score(0, 0)
+
+    btn_play_again = Boton("images/btn_play_again.png", 235, 250)
+
     cargarAsteriodes()
 
     asteroide = elegirAsteriode(ASTERIODES)
@@ -319,6 +383,13 @@ def gameLoop(ventana):
                     elif evento.key == pygame.K_RIGHT:
                         nave.moverDerecha()
 
+            # Click del Mouse
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                # Click en el boton de "Play Again"
+                if cursor.colliderect(btn_play_again.rect):
+                    print "Play Again"
+
+
         # Cargo el fondo
         ventana.blit(fondo, (0, 0))
         
@@ -336,7 +407,8 @@ def gameLoop(ventana):
         if asteroide.rect.colliderect(nave.rect):
             nave.destruccion()
             en_juego = False
-            newText("GAME OVER", ventana, (200, 340), BLANCO, 50)
+            newText("GAME OVER", ventana, (200, 200), BLANCO, 50)
+            btn_play_again.dibujar(ventana)
             
             # Seteo el nuevo puntaje mas alto
             mi_puntaje = score.getPuntaje() # Tipo int
@@ -351,6 +423,8 @@ def gameLoop(ventana):
             moverAsteroides(ASTERIODES)
             asteroide = elegirAsteriode(ASTERIODES)
 
+        cursor.update()
+
         fps.tick(20) # 20 FPS
 
         pygame.display.update()
@@ -361,6 +435,7 @@ def main():
     
     # Creacion Ventana
     ventana = pygame.display.set_mode((ANCHO, ALTO))
+    # Nombre de la ventana
     pygame.display.set_caption("Space Ship")
     
     gameMenu(ventana)
