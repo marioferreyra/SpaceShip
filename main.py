@@ -259,59 +259,6 @@ def pause(ventana, en_pausa):
         fps.tick(15)
 
 
-def helpMenu(ventana, sound_click):
-    """
-    Menu de ayuda del juego.
-    """
-    cursor = Cursor()
-
-    fondo = pygame.image.load("images/fondo.jpg")
-    flecha_izquierda = pygame.image.load("images/flecha_izquierda.png")
-    flecha_derecha = pygame.image.load("images/flecha_derecha.png")
-    btn_p = pygame.image.load("images/letra_p.png")
-
-    btn_back = Boton("images/back.png", 228, 600)
-
-    fps = pygame.time.Clock()
-
-    is_back = False
-
-    while not is_back:
-        for evento in pygame.event.get():
-            # Click en la "X" de la ventana
-            if evento.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-
-            # Click del Mouse
-            if evento.type == pygame.MOUSEBUTTONDOWN:
-                # Click en el boton de "Play Game"
-                if cursor.colliderect(btn_back.rect):
-                    sound_click.play()
-                    is_back = True
-
-        ventana.blit(fondo, (0, 0))
-        
-        cursor.update()
-
-        newText("Help", ventana, (210, 50), BLANCO, 100)
-
-        ventana.blit(flecha_izquierda, (100, 200))
-        newText("Ship move left", ventana, (200, 200), BLANCO, 50)
-
-        ventana.blit(flecha_derecha, (100, 300))
-        newText("Ship move right", ventana, (200, 300), BLANCO, 50)
-
-        ventana.blit(btn_p, (100, 400))
-        newText("Pause the game", ventana, (200, 400), BLANCO, 50)
-
-        btn_back.dibujar(ventana)
-
-        pygame.display.update()
-        
-        fps.tick(15)
-
-
 def gameMenu(ventana, sound_click):
     """
     Menu principal del juego.
@@ -340,15 +287,15 @@ def gameMenu(ventana, sound_click):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Game"
                 if cursor.colliderect(btn_play.rect):
-                    sound_click.play()
+                    sound_click.play() # Sonido de Click
                     click_button = True
                 # Click en el boton de "Help"
                 if cursor.colliderect(btn_help.rect):
-                    sound_click.play()
+                    sound_click.play() # Sonido de Click
                     helpMenu(ventana, sound_click)
                 # Click en el boton de "Quit"
                 if cursor.colliderect(btn_quit.rect):
-                    sound_click.play()
+                    sound_click.play() # Sonido de Click
                     pygame.quit()
                     quit()
 
@@ -367,6 +314,59 @@ def gameMenu(ventana, sound_click):
         newText("High Score: " + str(getHighScore()), ventana, (200, 500), BLANCO, 50)
 
         pygame.display.update()
+        fps.tick(15)
+
+
+def helpMenu(ventana, sound_click):
+    """
+    Menu de ayuda del juego.
+    """
+    cursor = Cursor()
+
+    fondo = pygame.image.load("images/fondo.jpg")
+    flecha_izquierda = pygame.image.load("images/flecha_izquierda.png")
+    flecha_derecha = pygame.image.load("images/flecha_derecha.png")
+    btn_p = pygame.image.load("images/letra_p.png")
+
+    btn_back = Boton("images/back.png", 228, 600)
+
+    fps = pygame.time.Clock()
+
+    is_back = False
+
+    while not is_back:
+        for evento in pygame.event.get():
+            # Click en la "X" de la ventana
+            if evento.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+            # Click del Mouse
+            if evento.type == pygame.MOUSEBUTTONDOWN:
+                # Click en el boton de "Play Game"
+                if cursor.colliderect(btn_back.rect):
+                    sound_click.play() # Sonido de Click
+                    is_back = True
+
+        ventana.blit(fondo, (0, 0))
+        
+        cursor.update()
+
+        newText("Help", ventana, (210, 50), BLANCO, 100)
+
+        ventana.blit(flecha_izquierda, (100, 200))
+        newText("Ship move left", ventana, (200, 200), BLANCO, 50)
+
+        ventana.blit(flecha_derecha, (100, 300))
+        newText("Ship move right", ventana, (200, 300), BLANCO, 50)
+
+        ventana.blit(btn_p, (100, 400))
+        newText("Pause the game", ventana, (200, 400), BLANCO, 50)
+
+        btn_back.dibujar(ventana)
+
+        pygame.display.update()
+        
         fps.tick(15)
 
 
@@ -422,13 +422,13 @@ def gameLoop(ventana, sound_click):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Again"
                 if cursor.colliderect(btn_play_again.rect):
-                    sound_click.play()
+                    sound_click.play() # Sonido de Click
                     detenerAsteriodes(ASTERIODES)
-                    pygame.mixer.music.play()
+                    pygame.mixer.music.play() # Musica de fondo
                     gameLoop(ventana, sound_click)
                 # Click en el boton de "Quit"
                 if cursor.colliderect(btn_quit.rect):
-                    sound_click.play()
+                    sound_click.play() # Sonido de Click
                     pygame.quit()
                     sys.exit()
 
@@ -456,13 +456,15 @@ def gameLoop(ventana, sound_click):
             btn_play_again.dibujar(ventana)
             btn_quit.dibujar(ventana)
             
-            # Seteo el nuevo puntaje mas alto
+            # Obtengo el puntaje obtenido
             mi_puntaje = score.getPuntaje() # Tipo int
 
+            # Seteo el nuevo puntaje mas alto
             if mi_puntaje > getHighScore():
                 is_highscore = True
                 setHighScore(score.getPuntaje())
 
+            # Si obtuve un nuevo High Score lo muestro
             if is_highscore:
                 newText("New High Score: " + str(mi_puntaje), ventana, (170, 390), BLANCO, 50)
 
@@ -470,7 +472,8 @@ def gameLoop(ventana, sound_click):
         if asteroide.rect.top > ANCHO + 100:
             if en_juego:
                 score.aumentar()
-            asteroide.rect.top = 10
+
+            asteroide.rect.top = 10 # Coloco el asteriode en su posicion original
             moverAsteroides(ASTERIODES)
             asteroide = elegirAsteriode(ASTERIODES)
 
