@@ -83,6 +83,12 @@ class Asteroide(pygame.sprite.Sprite):
         """
         self.rect.top += 10
 
+    def detener(self):
+        """
+        Mueve el asteroide a su posicion inicial.
+        """
+        self.rect.top = -50
+
 
 class Score(pygame.sprite.Sprite):
     """
@@ -180,6 +186,14 @@ def moverAsteroides(lista_asteriodes):
     """
     for asteroide in lista_asteriodes:
         asteroide.rect.left = random.randint(22, 450)
+
+
+def detenerAsteriodes(lista_asteriodes):
+    """
+    Mueve los asteroides de la lista de asteriodes a su posicion inicial.
+    """
+    for asteroide in lista_asteriodes:
+        asteroide.detener()
 
 
 def newText(texto, superficie, posicion=(0, 0), color=NEGRO, length=12):
@@ -358,6 +372,7 @@ def gameLoop(ventana):
     score = Score(0, 0)
 
     btn_play_again = Boton("images/btn_play_again.png", 235, 250)
+    btn_quit = Boton("images/btn_quit.png", 235, 320)
 
     cargarAsteriodes()
 
@@ -387,9 +402,12 @@ def gameLoop(ventana):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Again"
                 if cursor.colliderect(btn_play_again.rect):
-                    # VER BIEN
-                    en_juego = True
+                    detenerAsteriodes(ASTERIODES)
                     gameLoop(ventana)
+                # Click en el boton de "Quit"
+                if cursor.colliderect(btn_quit.rect):
+                    pygame.quit()
+                    sys.exit()
 
 
         # Cargo el fondo
@@ -411,11 +429,12 @@ def gameLoop(ventana):
             en_juego = False
             newText("GAME OVER", ventana, (200, 200), BLANCO, 50)
             btn_play_again.dibujar(ventana)
+            btn_quit.dibujar(ventana)
             
             # Seteo el nuevo puntaje mas alto
             mi_puntaje = score.getPuntaje() # Tipo int
+            
             if mi_puntaje > getHighScore():
-                print "HOLA"
                 setHighScore(score.getPuntaje())
 
         # Si el asteroide no choca con la nave
