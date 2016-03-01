@@ -387,7 +387,9 @@ def gameLoop(ventana):
             if evento.type == pygame.MOUSEBUTTONDOWN:
                 # Click en el boton de "Play Again"
                 if cursor.colliderect(btn_play_again.rect):
-                    print "Play Again"
+                    # VER BIEN
+                    en_juego = True
+                    gameLoop(ventana)
 
 
         # Cargo el fondo
@@ -413,6 +415,7 @@ def gameLoop(ventana):
             # Seteo el nuevo puntaje mas alto
             mi_puntaje = score.getPuntaje() # Tipo int
             if mi_puntaje > getHighScore():
+                print "HOLA"
                 setHighScore(score.getPuntaje())
 
         # Si el asteroide no choca con la nave
