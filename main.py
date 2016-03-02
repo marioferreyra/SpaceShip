@@ -280,7 +280,7 @@ def gameMenu(ventana, sound_click):
             # Click en la "X" de la ventana
             if evento.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                sys.exit()
 
             # Click del Mouse
             if evento.type == pygame.MOUSEBUTTONDOWN:
