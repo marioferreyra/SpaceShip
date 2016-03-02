@@ -244,7 +244,7 @@ def pause(ventana, en_pausa):
             # Click en la "X" de la ventana
             if evento.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                sys.exit()
 
             if evento.type == pygame.KEYDOWN:
                     # Despausa el juego
@@ -296,7 +296,7 @@ def gameMenu(ventana, sound_click):
                 if cursor.colliderect(btn_quit.rect):
                     sound_click.play() # Sonido de Click
                     pygame.quit()
-                    quit()
+                    sys.exit()
 
         ventana.blit(fondo, (0, 0))
 
@@ -338,7 +338,7 @@ def helpMenu(ventana, sound_click):
             # Click en la "X" de la ventana
             if evento.type == pygame.QUIT:
                 pygame.quit()
-                quit()
+                sys.exit()
 
             # Click del Mouse
             if evento.type == pygame.MOUSEBUTTONDOWN:
