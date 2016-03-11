@@ -235,6 +235,7 @@ def gameLoop(ventana, sound_click):
         ventana.blit(fondo, (0, 0))
         
         # Dibujo la nave
+        nave.mover()
         nave.dibujar(ventana)
         # Dibujo el puntaje
         score.dibujar(ventana)

@@ -17,6 +17,8 @@ class Nave(pygame.sprite.Sprite):
         self.rect.centerx = ancho_pantalla/2
         self.rect.centery = 610
 
+        self.velocidad = 25
+
         self.sonido_explosion = pygame.mixer.Sound("sounds/explosion.wav")
 
     def dibujar(self, superficie):
@@ -43,12 +45,16 @@ class Nave(pygame.sprite.Sprite):
         """
         Mueve la nave hacia la derecha.
         """
-        if self.rect.left <= 450:
-            self.rect.left += 25
+        self.rect.left += self.velocidad
 
     def moverIzquierda(self):
         """
         Mueve la nave hacia la izquierda.
         """
+        self.rect.left -= self.velocidad
+
+    def mover(self):
         if self.rect.left >= 22:
-            self.rect.left -= 25
+            self.rect.move_ip(self.rect.left, self.rect.top)
+        if self.rect.left <= 450:
+            self.rect.move_ip(self.rect.left, self.rect.top)
