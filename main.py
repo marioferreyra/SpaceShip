@@ -4,6 +4,13 @@ import sys
 import pygame
 import random
 
+from nave import *
+from asteroide import *
+from score import *
+from boton import *
+from cursor import *
+from highscore import *
+
 # Colores
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
@@ -16,195 +23,6 @@ ALTO = 680
 ASTERIODES = []
 
 
-class Nave(pygame.sprite.Sprite):
-    """
-    Clase para la Nave espacial.
-    """
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.imagen = pygame.image.load("images/nave.png")
-        self.imagen_explosion = pygame.image.load("images/explosion.png")
-        self.rect = self.imagen.get_rect()
-        
-        self.rect.centerx = ANCHO/2
-        self.rect.centery = 610
-
-        self.sonido_explosion = pygame.mixer.Sound("sounds/explosion.wav")
-
-    def dibujar(self, superficie):
-        """
-        Dibuja la nave espacial en la superficie indicada.
-        """
-        superficie.blit(self.imagen, self.rect)
-
-    def destruccion(self):
-        """
-        Cambia la imagen principal de la nave por una explosion.
-        """
-        self.imagen = self.imagen_explosion
-
-    def sonidoDestruccion(self, is_destroy):
-        """
-        Reproduce el sonido de destruccion de la nave.
-        """
-        if is_destroy:
-            self.sonido_explosion.play()
-
-
-    def moverDerecha(self):
-        """
-        Mueve la nave hacia la derecha.
-        """
-        if self.rect.left <= 450:
-            self.rect.left += 25
-
-    def moverIzquierda(self):
-        """
-        Mueve la nave hacia la izquierda.
-        """
-        if self.rect.left >= 22:
-            self.rect.left -= 25
-
-
-class Asteroide(pygame.sprite.Sprite):
-    """
-    Clase para los Asteroides del juego.
-    """
-    def __init__(self, path_image, posX=0, posY=0):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.imagen = pygame.image.load(path_image)
-        self.rect = self.imagen.get_rect()
-
-        self.rect.left = posX
-        self.rect.top = posY
-
-    def dibujar(self, superficie):
-        """
-        Dibuja el asteroide en la superficie indicada.
-        """
-        superficie.blit(self.imagen, self.rect)
-
-    def mover(self):
-        """
-        Mueve el asteroide hacia abajo.
-        """
-        self.rect.top += 18
-
-    def detener(self):
-        """
-        Mueve el asteroide a su posicion inicial.
-        """
-        self.rect.top = -50
-
-
-class Score(pygame.sprite.Sprite):
-    """
-    Clase para el puntaje del juego.
-    """
-    def __init__(self, posX, posY):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.posX = posX
-        self.posY = posY
-        self.puntaje = 0
-        self.fuente = pygame.font.SysFont("comicsansms", 40)
-
-    def getPuntaje(self):
-        """
-        Obtiene el puntaje actual del juego.
-        """
-        return self.puntaje
-
-    def aumentar(self):
-        """
-        Aumenta el puntaje del juego.
-        """
-        self.puntaje += 1
-
-    def reset(self):
-        """
-        Resetea el puntaje del juego a 0.
-        """
-        self.puntaje = 0
-
-    def dibujar(self, superficie):
-        """
-        Dibuja el puntaje en la superficie indicada.
-        """
-        texto = self.fuente.render("Score: " + str(self.puntaje), True, BLANCO)
-        superficie.blit(texto, (self.posX, self.posY))
-
-
-class Cursor(pygame.Rect):
-    """
-    Clase para el cursor del mouse.
-    """
-    def __init__(self):
-        pygame.Rect.__init__(self, 0, 0, 1, 1)
-
-    def update(self):
-        """
-        Obtiene la posicion actual del cursor.
-        """
-        self.left, self.top = pygame.mouse.get_pos()
-
-
-class Boton(pygame.sprite.Sprite):
-    """
-    Clase para los botones.
-    """
-    def __init__(self, path_imagen, posX=300, posY=340):
-        pygame.sprite.Sprite.__init__(self)
-
-        self.imagen = pygame.image.load(path_imagen)
-        self.rect = self.imagen.get_rect()
-        self.rect.left = posX
-        self.rect.top = posY
-
-    def dibujar(self, superficie):
-        """
-        Dibuja el boton en la superficie indicada.
-        """
-        superficie.blit(self.imagen, self.rect)
-
-
-def cargarAsteriodes():
-    """
-    Agrega una serie de objetos asteriodes a la lista ASTERIODES.
-    """
-    asteroide1 = Asteroide("images/asteroide1.png", 22, -50)
-    asteroide2 = Asteroide("images/asteroide2.png", 236, -50)
-    asteroide3 = Asteroide("images/asteroide3.png", 450, -50)
-    ASTERIODES.append(asteroide1)
-    ASTERIODES.append(asteroide2)
-    ASTERIODES.append(asteroide3)
-
-
-def elegirAsteriode(lista_asteriodes):
-    """
-    Elige un asteroide de forma random de una lista de asteroides.
-    """
-    return lista_asteriodes[random.randint(0, 2)]
-
-
-def moverAsteroides(lista_asteriodes):
-    """
-    Mueve los asteroides de la lista de asteriodes a una posicion aleatoria.
-    """
-    for asteroide in lista_asteriodes:
-        asteroide.rect.left = random.randint(22, 450)
-
-
-def detenerAsteriodes(lista_asteriodes):
-    """
-    Mueve los asteroides de la lista de asteriodes a su posicion inicial.
-    """
-    for asteroide in lista_asteriodes:
-        asteroide.detener()
-
-
 def newText(texto, superficie, posicion=(0, 0), color=NEGRO, length=12):
     """
     Metodo generico para crear texto.
@@ -212,25 +30,6 @@ def newText(texto, superficie, posicion=(0, 0), color=NEGRO, length=12):
     fuente = pygame.font.SysFont("comicsansms", length)
     text = fuente.render(texto, True, color)
     superficie.blit(text, posicion)
-
-
-def getHighScore():
-    """
-    Obtiene el puntaje del archivo 'high_score.txt'.
-    """
-    with open("high_score.txt", "r") as f:
-        lineas = f.readlines()
-        for l in lineas:
-            return int(l)
-        f.close()
-
-def setHighScore(new_score):
-    """
-    Setea un nuevo puntaje en el archivo 'high_score.txt'.
-    """
-    with open("high_score.txt", "w") as f:
-        f.writelines(str(new_score))
-        f.close()
 
 
 def pause(ventana, en_pausa):
@@ -383,13 +182,13 @@ def gameLoop(ventana, sound_click):
     en_pausa = False
 
     cursor = Cursor()
-    nave = Nave()
-    score = Score(0, 0)
+    nave = Nave(ANCHO)
+    score = Score(0, 0, BLANCO)
 
     btn_play_again = Boton("images/play_again.png", 235, 250)
     btn_quit = Boton("images/quit.png", 235, 320)
 
-    cargarAsteriodes()
+    cargarAsteriodes(ASTERIODES)
     moverAsteroides(ASTERIODES)
 
     asteroide = elegirAsteriode(ASTERIODES)
