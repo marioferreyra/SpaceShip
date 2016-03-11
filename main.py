@@ -69,7 +69,7 @@ def gameMenu(ventana, sound_click):
 
     fps = pygame.time.Clock()
 
-    fondo = pygame.image.load("images/fondo.jpg")
+    fondo = pygame.image.load("images/fondo2.jpg")
     logo = pygame.image.load("images/logo.png")
 
     click_button = False
@@ -121,7 +121,7 @@ def helpMenu(ventana, sound_click):
     """
     cursor = Cursor()
 
-    fondo = pygame.image.load("images/fondo.jpg")
+    fondo = pygame.image.load("images/fondo2.jpg")
     flecha_izquierda = pygame.image.load("images/flecha_izquierda.png")
     flecha_derecha = pygame.image.load("images/flecha_derecha.png")
     btn_p = pygame.image.load("images/letra_p.png")
