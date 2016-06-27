@@ -1,2 +1,2 @@
 # Spaceship_Pygame
-Juego echo en Python con Pygame
+Juego hecho en Python con la libreria Pygame
